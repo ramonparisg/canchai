@@ -56,9 +56,8 @@ public class Player implements Serializable{
     @ManyToOne(optional = false)
     private Commune commune;
     
-    @JoinColumn(name = "Image_idImage", referencedColumnName = "idImagePlayer")
-    @ManyToOne(optional = false)
-    private ImagePlayer imagePlayer;
+    @Column(name = "image")
+    private String image;
     
     @JoinColumn(name = "User_idUser", referencedColumnName = "idUser")
     @ManyToOne(optional = false)
@@ -108,14 +107,6 @@ public class Player implements Serializable{
         this.commune = commune;
     }
 
-    public ImagePlayer getImagePlayer() {
-        return imagePlayer;
-    }
-
-    public void setImagePlayer(ImagePlayer imagePlayer) {
-        this.imagePlayer = imagePlayer;
-    }
-
     public User getUser() {
         return user;
     }
@@ -140,4 +131,14 @@ public class Player implements Serializable{
     public void setGames(List<Game> games) {
         this.games = games;
     }
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+    
+    
 }

@@ -88,6 +88,7 @@ public class UserController {
 		userService.save(player.getUser());
 		switch(player.getUser().getRol().getIdRol()) {				
 			case 2: //Player
+				player.setImage(PlayerController.DEFAULT_IMG);
 				playerService.save(player);
 				break;
 			case 3: //SportCenter
