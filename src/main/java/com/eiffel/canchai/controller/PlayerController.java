@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,12 +95,8 @@ public class PlayerController {
 			}											
 		}
 		
-		try {			
-			Date date = new Date();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-			String dateName = dateFormat.format(date);
-			
-			String fileName = String.valueOf(idPlayer) + "-picturePlayer-" + dateName + "." + multipartFile.getContentType().split("/")[1];
+		try {						
+			String fileName = String.valueOf(idPlayer) + "-picturePlayer" + "." + multipartFile.getContentType().split("/")[1];
 			
 			player.setImage(PLAYER_IMAGE_URL + fileName);
 			playerService.update(player);
@@ -146,4 +143,35 @@ public class PlayerController {
 		}
 		
 	}
+	
+		//Remove image
+		@DeleteMapping(value="/{id}/image")
+		public ResponseEntity<?> removePlayerImage(@PathVariable("id") Integer idPlayer){
+			if (idPlayer == null) {
+				return new ResponseEntity(new ErrorMsg("Please set id_player"), HttpStatus.NO_CONTENT);
+			}				
+			
+			Player player = playerService.findById(idPlayer);
+			if (player == null) {
+				return new ResponseEntity(new ErrorMsg("player with id_player: " + idPlayer + " not found"), HttpStatus.NOT_FOUND);
+			}
+			
+		
+			Path path = Paths.get(player.getImage());
+			File f = path.toFile();
+			if (!f.exists()) {
+				return new ResponseEntity(new ErrorMsg("image not found"), HttpStatus.NOT_FOUND);
+			}
+			
+			if (player.getImage().equals(DEFAULT_IMG)) {	
+				return new ResponseEntity(new ErrorMsg("You can not delete the default image"), HttpStatus.NOT_FOUND);
+			}
+			
+			f.delete();
+			player.setImage(DEFAULT_IMG);
+			playerService.update(player);
+									
+			return new ResponseEntity<Player>(HttpStatus.OK);			
+		
+		}
 }
