@@ -24,4 +24,10 @@ public class CommuneService implements ICommuneService {
 		return communeDao.findAll();
 	}
 
+	@Override
+	public void update(Commune entity) {
+		communeDao.update(entity);
+		
+	}
+
 }

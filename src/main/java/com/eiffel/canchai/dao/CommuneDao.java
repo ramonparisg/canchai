@@ -24,4 +24,10 @@ public class CommuneDao implements ICommuneDao {
 		return entityManager.createQuery("from Commune").getResultList();
 	}
 
+	@Override
+	public void update(Commune entity) {
+		entityManager.merge(entity);
+		
+	}
+
 }

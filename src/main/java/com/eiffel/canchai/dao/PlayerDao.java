@@ -34,15 +34,21 @@ public class PlayerDao implements IPlayerDao{
 	}
 
 	@Override
-	public void update(Player entity) {
-		// TODO Auto-generated method stub
-		
+	public void update(Player p) {
+		/*
+		Player currentPlayer = findById(p.getIdPlayer());
+		currentPlayer.setBirthDate(p.getBirthDate());
+		currentPlayer.getCommune().setIdCommune(p.getCommune().getIdCommune());
+		currentPlayer.setDescription(p.getDescription());
+		currentPlayer.getUser().setPhone(p.getUser().getPhone());
+		*/
+		entityManager.merge(p);
 	}
 
 	@Override
 	public Player findById(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		return (Player) entityManager.find(Player.class, id);
 	}
 	
 	@Override

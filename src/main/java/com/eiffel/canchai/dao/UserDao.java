@@ -48,6 +48,15 @@ public class UserDao implements IUserDao {
 
 	@Override
 	public User findByEmail(String email) {
-		return (User) entityManager.createQuery("from User where email= :email").setParameter("email", email).getSingleResult();
+		return (User) entityManager.createQuery("from User where email= :email").setParameter("email", email).getSingleResult();				
 	}
+
+	@Override
+	public boolean userExists(String rut, String email) {
+		String hql = "from User where rut = :rut or email = :email";
+		int count = entityManager.createQuery(hql).setParameter("rut", rut).setParameter("email", email).getResultList().size();
+		return count > 0 ? true : false;		
+	}
+	
+	
 }

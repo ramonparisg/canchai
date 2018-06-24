@@ -35,6 +35,7 @@ public class PlayerService implements IPlayerService{
 
 	@Override
 	public void update(Player entity) {
+		
 		playerDao.update(entity);
 	}
 

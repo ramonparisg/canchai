@@ -6,4 +6,6 @@ import com.eiffel.canchai.model.Commune;
 
 public interface ICommuneDao{
 	List<Commune> findAll();
+	
+	void update(final Commune entity);
 }

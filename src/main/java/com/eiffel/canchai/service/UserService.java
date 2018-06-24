@@ -48,22 +48,25 @@ public class UserService implements IUserService {
 
 	@Override
 	public User login(String email, String pass) {
-		User u = findByEmail(email);
-		if (u == null) 
-			return null;
+		if (userExists("", email)) {
+			User u = findByEmail(email);
+			if (u.getPassword().equals(pass)) 
+				return u;
+			else
+				return null;
+		}
 		
-		
-		if (u.getPassword().equals(pass)) 
-			return u;
-		else
-			return null;
-		
-		
+		return null;
 	}
 
 	@Override
-	public User findByEmail(String email) {
+	public User findByEmail(String email) {		
 		return userDao.findByEmail(email);
+	}
+
+	@Override
+	public boolean userExists(String rut, String email) {		
+		return userDao.userExists(rut, email);
 	}
 
 }

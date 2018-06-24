@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ import com.eiffel.canchai.util.ErrorMsg;
 
 @Controller
 @RequestMapping("/users")
+@CrossOrigin
 public class UserController {
 	@Autowired
 	private IUserService userService;
@@ -79,7 +81,10 @@ public class UserController {
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Void> register(@RequestBody Player player, UriComponentsBuilder builder){
+	public ResponseEntity<Void> register(@RequestBody Player player, UriComponentsBuilder builder){		 
+		if (userService.userExists(player.getUser().getRut(), player.getUser().getEmail())) {
+			return new ResponseEntity(new ErrorMsg("Usuario ya existe"),HttpStatus.CONFLICT);
+		}
 		userService.save(player.getUser());
 		switch(player.getUser().getRol().getIdRol()) {				
 			case 2: //Player
@@ -96,7 +101,7 @@ public class UserController {
 	
 	@PostMapping
 	@RequestMapping(value = "/login")
-	public ResponseEntity<?> login(@RequestBody User u){		
+	public ResponseEntity<?> login(@RequestBody User u){			
 		User user = userService.login(u.getEmail(), u.getPassword());
 		if (user == null) 
 			return new ResponseEntity(new ErrorMsg("Email y contraseña no coinciden"),HttpStatus.CONFLICT);		
@@ -106,9 +111,6 @@ public class UserController {
 			return new ResponseEntity<User>(user,HttpStatus.OK);			
 		case 2: //Player			
 			Player p = playerService.findByUserID(user.getIdUser());
-			//Player p = playerService.findById(1);
-			if (p==null)
-				return new ResponseEntity(new ErrorMsg("que ladillaaa"),HttpStatus.CONFLICT);		 
 			return new ResponseEntity<Player>(p,HttpStatus.OK);			
 		case 3: //SportCenter
 			
