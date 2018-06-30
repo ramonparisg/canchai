@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.eiffel.canchai.model.Player;
-import com.eiffel.canchai.model.User;
 import com.eiffel.canchai.service.interfaces.IPlayerService;
 import com.eiffel.canchai.util.ErrorMsg;
 

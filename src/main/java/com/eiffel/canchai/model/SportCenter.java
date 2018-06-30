@@ -3,9 +3,11 @@ package com.eiffel.canchai.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "sport_center")
@@ -41,19 +45,24 @@ public class SportCenter implements Serializable{
     @JoinTable(name = "sport_center_has_user", joinColumns = {
         @JoinColumn(name = "Sport_center_idSport_Center", referencedColumnName = "idSport_Center")}, inverseJoinColumns = {
         @JoinColumn(name = "User_idUser", referencedColumnName = "idUser")})
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<User> users;
     
-    @ManyToMany(mappedBy = "sportCenters")
+    
+    @JoinTable(name = "sport_center_has_service", joinColumns = {
+    @JoinColumn(name = "Sport_center_idSport_Center", referencedColumnName = "idSport_Center")}, inverseJoinColumns = {    
+    @JoinColumn(name = "Service_idService", referencedColumnName = "idService")})
+    @ManyToMany(cascade = CascadeType.ALL)        
     private List<Service> services;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")  
+    @JsonIgnore
     private List<ImageField> imageFields;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")    
     private List<Field> fields;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter", fetch = FetchType.LAZY)    
     private List<Phone> phones;
     
     @JoinColumn(name = "Commune_idCommune", referencedColumnName = "idCommune")

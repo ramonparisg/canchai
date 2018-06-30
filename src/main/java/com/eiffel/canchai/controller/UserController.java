@@ -42,10 +42,9 @@ public class UserController {
 	@Autowired
 	IPlayerService playerService;
 	
-	/*
+	
 	@Autowired
-	ISportCenterService sportCenterService;
-	*/
+	ISportCenterService sportCenterService;	
 	
 	@GetMapping
 	public ResponseEntity<List<User>> getAllUsers() {
@@ -81,7 +80,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<Void> register(@RequestBody Player player, UriComponentsBuilder builder){		 
+	public ResponseEntity<?> register(@RequestBody Player player, UriComponentsBuilder builder){		 
 		if (userService.userExists(player.getUser().getRut(), player.getUser().getEmail())) {
 			return new ResponseEntity(new ErrorMsg("Usuario ya existe"),HttpStatus.CONFLICT);
 		}
@@ -90,14 +89,9 @@ public class UserController {
 			case 2: //Player
 				player.setImage(PlayerController.DEFAULT_IMG);
 				playerService.save(player);
-				break;
-			case 3: //SportCenter
-				
-				break;
-		}	
-		HttpHeaders header = new HttpHeaders();
-		header.setLocation(builder.path("/users/{id}").buildAndExpand(player.getUser().getIdUser()).toUri());
-		return new ResponseEntity<Void>(header,HttpStatus.CREATED);
+				return new ResponseEntity(player,HttpStatus.CREATED);				
+		}			
+		return new ResponseEntity(player.getUser(),HttpStatus.CREATED);
 	}
 	
 	@PostMapping
@@ -111,16 +105,27 @@ public class UserController {
 		case 1: //Administrator
 			return new ResponseEntity<User>(user,HttpStatus.OK);			
 		case 2: //Player			
-			Player p = playerService.findByUserID(user.getIdUser());
+			Player p = playerService.findByUserID(user.getIdUser());			
 			return new ResponseEntity<Player>(p,HttpStatus.OK);			
 		case 3: //SportCenter
-			
-			break;
+			SportCenter sc = sportCenterService.findById(user.getSportCenters().get(0).getIdSportCenter());
+			return new ResponseEntity<SportCenter>(sc,HttpStatus.OK);
+			//return new ResponseEntity<User>(user,HttpStatus.OK);
+			//break;
 		}	
 		
-		return new ResponseEntity<User>(user,HttpStatus.OK);	
+		return new ResponseEntity<User>(user,HttpStatus.OK);			
+	}
+	
+	@PostMapping
+	public ResponseEntity<?> findByEmail(@RequestBody User u){			
+		User user = userService.findByEmail(u.getEmail());
+		if (user == null) 
+			return new ResponseEntity(new ErrorMsg("Email no encontrado"),HttpStatus.CONFLICT);
 		
+		if (user.getRol().getIdRol() != 3) 
+			return new ResponseEntity(new ErrorMsg("El rol no corresponde a un centro deportivo"),HttpStatus.CONFLICT);
 		
-		
+		return new ResponseEntity<User>(user,HttpStatus.OK);			
 	}
 }

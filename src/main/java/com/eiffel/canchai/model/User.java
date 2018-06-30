@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,13 +46,14 @@ public class User implements Serializable {
     private Character gender;
         
     @Column(name = "password")    
+    @JsonIgnore
     private String password;
     
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Column(name = "email")
     private String email;
     
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<SportCenter> sportCenters;
     
@@ -167,6 +169,10 @@ public class User implements Serializable {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+    
+    public void addSportCenters(SportCenter sc) {    	
+    	sportCenters.add(sc);
     }
 
 }
