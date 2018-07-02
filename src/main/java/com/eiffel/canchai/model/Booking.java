@@ -13,9 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "booking")
@@ -28,9 +32,11 @@ public class Booking implements Serializable {
     private Integer idBooking;
         
     @Column(name = "bookingDate")
-    private String bookingDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date bookingDate;
         
     @Column(name = "status")
+    @JsonIgnore
     private int status;
     
     @Column(name = "availableQuota")
@@ -38,19 +44,17 @@ public class Booking implements Serializable {
     
     @Column(name = "gameDate")
     @Temporal(TemporalType.DATE)
-    private Date gameDate;
-    
-    @Column(name = "gameTime")
-    @Temporal(TemporalType.TIME)    
-    private Date gameTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private Date gameDate;        
        
 
 	@JoinColumn(name = "bookingType_idbookingType", referencedColumnName = "idbookingType")
     @ManyToOne(optional = false)
     private BookingType bookingType;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "booking")
-    private List<Game> games;
+        
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "booking" )
+    @JsonIgnore
+    private Game game;
     
     @JoinColumn(name = "Field_idField", referencedColumnName = "idField")
     @ManyToOne(optional = false)
@@ -60,17 +64,15 @@ public class Booking implements Serializable {
     @ManyToOne(optional = false)
     private Player player;
     
+    @JoinColumn(name = "idBlockHour", referencedColumnName = "idBlockHour")
+    @ManyToOne(optional = false)
+    private BlockHour blockHour;
+    
     public Booking() {
     }
 
     public Booking(Integer idBooking) {
         this.idBooking = idBooking;
-    }
-
-    public Booking(Integer idBooking, String bookingDate, int status) {
-        this.idBooking = idBooking;
-        this.bookingDate = bookingDate;
-        this.status = status;
     }
 
     public Integer getIdBooking() {
@@ -81,11 +83,11 @@ public class Booking implements Serializable {
         this.idBooking = idBooking;
     }
 
-    public String getBookingDate() {
+    public Date getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(String bookingDate) {
+    public void setBookingDate(Date bookingDate) {
         this.bookingDate = bookingDate;
     }
 
@@ -104,16 +106,16 @@ public class Booking implements Serializable {
     public void setBookingType(BookingType bookingType) {
         this.bookingType = bookingType;
     }
-    
-    public List<Game> getGames() {
-        return games;
-    }
 
-    public void setGames(List<Game> games) {
-        this.games = games;
-    }
-    
-    public Player getPlayer() {
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+	public Player getPlayer() {
         return player;
     }
 
@@ -137,14 +139,6 @@ public class Booking implements Serializable {
 		this.gameDate = gameDate;
 	}
 
-	public Date getGameTime() {
-		return gameTime;
-	}
-
-	public void setGameTime(Date gameTime) {
-		this.gameTime = gameTime;
-	}
-	
     public Field getField() {
         return field;
     }
@@ -152,4 +146,14 @@ public class Booking implements Serializable {
     public void setField(Field field) {
         this.field = field;
     }
+
+	public BlockHour getBlockHour() {
+		return blockHour;
+	}
+
+	public void setBlockHour(BlockHour blockHour) {
+		this.blockHour = blockHour;
+	}
+    
+    
 }

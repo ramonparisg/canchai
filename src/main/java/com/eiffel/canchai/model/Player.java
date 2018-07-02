@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -31,6 +32,7 @@ public class Player implements Serializable{
         
     @Column(name = "birthDate")
     //@Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthDate;
         
     @Column(name = "description")
@@ -44,7 +46,7 @@ public class Player implements Serializable{
     private List<Position> positions;
     */
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "player")
+    @OneToMany(mappedBy = "player")
     @JsonIgnore
     private List<Booking> bookings;
     

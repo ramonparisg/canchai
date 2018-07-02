@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "bookingtype")
 public class BookingType implements Serializable {
@@ -24,7 +26,8 @@ public class BookingType implements Serializable {
     @Column(name = "description")
     private String description;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bookingType")
+    @OneToMany(mappedBy = "bookingType")
+    @JsonIgnore
     private List<Booking> bookings;
 
     public BookingType() {

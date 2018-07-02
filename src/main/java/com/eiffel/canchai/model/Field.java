@@ -35,7 +35,7 @@ public class Field implements Serializable{
     @Column(name = "description")
     private String description;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "field")
+    @OneToMany(mappedBy = "field")
     @JsonIgnore
     private List<Booking> bookings;
     

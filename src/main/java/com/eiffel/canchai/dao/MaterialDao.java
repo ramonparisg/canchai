@@ -3,6 +3,7 @@ package com.eiffel.canchai.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import com.eiffel.canchai.model.Material;
 @Transactional
 public class MaterialDao implements IMaterialDao {
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 	
 	@Override

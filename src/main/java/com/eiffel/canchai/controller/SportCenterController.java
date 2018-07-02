@@ -113,7 +113,7 @@ public class SportCenterController {
 	//Asign users to a SC
 	@PostMapping("/users")	
 	public ResponseEntity<?> asignUser(@RequestBody SportCenter sc) {
-		if (sc.getIdSportCenter() == null || sc.getServices().size() == 0) {
+		if (sc.getIdSportCenter() == null || sc.getUsers().size() == 0) {
 			return new ResponseEntity(new ErrorMsg("Check parameters. One or more are missing"),HttpStatus.NO_CONTENT);
 		}
 		

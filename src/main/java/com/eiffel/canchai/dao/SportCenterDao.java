@@ -4,14 +4,22 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eiffel.canchai.dao.interfaces.ISportCenterDao;
 import com.eiffel.canchai.model.SportCenter;
+
 
 @Repository
 @Transactional
@@ -19,6 +27,9 @@ public class SportCenterDao implements ISportCenterDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
 	
 	@Override
 	public void save(SportCenter entity) {
@@ -61,7 +72,16 @@ public class SportCenterDao implements ISportCenterDao {
 
 	@Override
 	public List<SportCenter> findByCriteria(int fieldType, Date date, int time, int commune) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		
+		/*
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();		
+		CriteriaQuery<SportCenter> criteria = builder.createQuery(SportCenter.class);
+		Root<SportCenter> root = criteria.from(SportCenter.class);
+		criteria.select(root);
+		//criteria.where(builder.equal("", y))
+		*/
+		
+		String q = "SELECT SportCenter FROM ";
 		
 		return null;
 	}

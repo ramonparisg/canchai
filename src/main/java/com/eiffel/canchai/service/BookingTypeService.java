@@ -1,22 +1,22 @@
-package com.eiffel.canchai.dao;
+package com.eiffel.canchai.service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.eiffel.canchai.dao.interfaces.IBookingTypeDao;
 import com.eiffel.canchai.model.BookingType;
+import com.eiffel.canchai.service.interfaces.IBookingTypeService;
 
-@Repository
+@Service("bookingTypeService")
 @Transactional
-public class BookingTypeDao implements IBookingTypeDao {
+public class BookingTypeService implements IBookingTypeService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+	@Autowired
+	IBookingTypeDao bookingTypeDao;
 	
 	@Override
 	public void save(BookingType entity) {
@@ -27,7 +27,7 @@ public class BookingTypeDao implements IBookingTypeDao {
 	@Override
 	public List<BookingType> findAll() {
 		// TODO Auto-generated method stub
-		return (List<BookingType>) entityManager.createQuery("from BookingType").getResultList();
+		return bookingTypeDao.findAll();
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class BookingTypeDao implements IBookingTypeDao {
 	@Override
 	public BookingType findById(int id) {
 		// TODO Auto-generated method stub
-		return (BookingType) entityManager.find(BookingType.class, id);
+		return bookingTypeDao.findById(id);
 	}
 
 }

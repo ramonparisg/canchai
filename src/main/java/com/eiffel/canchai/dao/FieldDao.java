@@ -3,8 +3,12 @@ package com.eiffel.canchai.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,11 +19,18 @@ import com.eiffel.canchai.model.Field;
 @Transactional
 public class FieldDao implements IFieldDao {
 	
-	 @Autowired
+	
+	 @PersistenceContext
 	 private EntityManager entityManager;
+	 
+	
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
+	 
+	
 	
 	@Override
-	public void save(Field entity) {
+	public void save(Field entity) {		
 		entityManager.persist(entity);
 	}
 
@@ -44,7 +55,9 @@ public class FieldDao implements IFieldDao {
 	@Override
 	public Field findById(int id) {
 		// TODO Auto-generated method stub
-		return (Field) entityManager.find(Field.class, id);
+		Session session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+		
+		return (Field) session.find(Field.class, id);
 	}
 
 }
