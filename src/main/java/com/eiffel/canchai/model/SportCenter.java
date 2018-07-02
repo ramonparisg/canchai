@@ -56,7 +56,6 @@ public class SportCenter implements Serializable{
     private List<Service> services;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")  
-    @JsonIgnore
     private List<ImageField> imageFields;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "sportCenter")    

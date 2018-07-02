@@ -14,6 +14,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 @Entity
 @Table(name = "field")
 public class Field implements Serializable{
@@ -25,12 +29,14 @@ public class Field implements Serializable{
     private Integer idField;
     
     @Column(name = "status")
+    @JsonIgnore
     private short status;
     
     @Column(name = "description")
     private String description;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "field")
+    @JsonIgnore
     private List<Booking> bookings;
     
     @JoinColumn(name = "FieldType_idFieldType", referencedColumnName = "idFieldType")
@@ -39,9 +45,13 @@ public class Field implements Serializable{
     
     @JoinColumn(name = "Sport_center_idSport_Center", referencedColumnName = "idSport_Center")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private SportCenter sportCenter;
     
-
+    @JoinColumn(name = "Material_idMaterial", referencedColumnName = "idMaterial")
+    @ManyToOne(optional = false)
+    private Material material;
+    
     public Field() {
     }
 
@@ -94,12 +104,24 @@ public class Field implements Serializable{
         this.fieldType = fieldType;
     }
 
+    @JsonIgnore
     public SportCenter getSportCenter() {
         return sportCenter;
     }
 
+    @JsonProperty
     public void setSportCenter(SportCenter sportCenter) {
         this.sportCenter = sportCenter;
     }
+
+	public Material getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+    
+    
 	
 }

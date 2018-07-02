@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "imagefield")
 public class ImageField implements Serializable{
@@ -25,6 +27,7 @@ public class ImageField implements Serializable{
     
     @JoinColumn(name = "Sport_center_idSport_Center", referencedColumnName = "idSport_Center")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private SportCenter sportCenter;
 
     public ImageField() {
@@ -39,7 +42,15 @@ public class ImageField implements Serializable{
         this.url = url;
     }
 
-    public Integer getIdImageField() {
+    
+    
+    public ImageField(String url, SportCenter sportCenter) {
+		super();
+		this.url = url;
+		this.sportCenter = sportCenter;
+	}
+
+	public Integer getIdImageField() {
         return idImageField;
     }
 

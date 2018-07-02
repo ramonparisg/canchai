@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "user")
@@ -45,7 +46,8 @@ public class User implements Serializable {
     @Column(name = "gender")
     private Character gender;
         
-    @Column(name = "password")        
+    @Column(name = "password")  
+    @JsonIgnore
     private String password;
     
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
@@ -130,10 +132,12 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
-
+    
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

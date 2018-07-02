@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "material")
 public class Material implements Serializable{
@@ -25,7 +27,8 @@ public class Material implements Serializable{
     private String name;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "material")
-    private List<FieldType> fieldTypes;
+    @JsonIgnore
+    private List<Field> fields;
 
     public Material() {
     }
@@ -54,12 +57,14 @@ public class Material implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
-    public List<FieldType> getFieldTypes() {
-        return fieldTypes;
-    }
 
-    public void setFieldTypes(List<FieldType> fieldTypes) {
-        this.fieldTypes = fieldTypes;
-    }
+	public List<Field> getFields() {
+		return fields;
+	}
+
+	public void setFields(List<Field> fields) {
+		this.fields = fields;
+	}
+
+    
 }

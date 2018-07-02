@@ -1,6 +1,10 @@
 package com.eiffel.canchai.controller;
 
 import java.util.Date;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,11 +23,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.eiffel.canchai.model.ImageField;
 import com.eiffel.canchai.model.Phone;
+import com.eiffel.canchai.model.Player;
 import com.eiffel.canchai.model.Service;
 import com.eiffel.canchai.model.SportCenter;
 import com.eiffel.canchai.model.User;
+import com.eiffel.canchai.service.interfaces.IImageFieldService;
 import com.eiffel.canchai.service.interfaces.IServiceService;
 import com.eiffel.canchai.service.interfaces.ISportCenterService;
 import com.eiffel.canchai.service.interfaces.IUserService;
@@ -41,6 +51,11 @@ public class SportCenterController {
 	
 	@Autowired
 	private IUserService userService;
+	
+	@Autowired
+	private IImageFieldService imageService;
+	
+	public static final String SC_IMAGE_URL = "images/sportcenter/";
 	
 	//Get all sport centers
 	@GetMapping
@@ -88,6 +103,10 @@ public class SportCenterController {
 		sc.setUsers(users);
 						
 		sportCenterService.save(sc);
+		
+		File dir = new File(SC_IMAGE_URL + sc.getIdSportCenter()+"");
+		dir.mkdirs();
+		
 		return new ResponseEntity(sc,HttpStatus.OK);
 	}
 	
@@ -158,5 +177,52 @@ public class SportCenterController {
 	}
 	
 	
+	//Upload image
+		@PostMapping(value="/image", headers=("content-type=multipart/form-data"))
+		public ResponseEntity<?> uploadSportCenterImages(@RequestParam("id_sc") Integer idSportCenter, @RequestParam("file") MultipartFile[] multipartFile, UriComponentsBuilder componentsBuilder){
+			if (idSportCenter == null) {
+				return new ResponseEntity(new ErrorMsg("Please set id_player"), HttpStatus.NO_CONTENT);
+			}			
+			
+			SportCenter sc = sportCenterService.findById(idSportCenter);
+			if (sc == null) {
+				return new ResponseEntity(new ErrorMsg("sc with id_sc: " + idSportCenter + " not found"), HttpStatus.NOT_FOUND);
+			}
+																
+			
+			try {						
+				
+				String fileName = "";
+				Path path = null;
+				ImageField imgField =  null;				
+				ArrayList<byte[]> bytes = new ArrayList<>();
+				int i = 0;
+				for (MultipartFile mpf : multipartFile) {
+					fileName = sc.getImageFields().size() + "-SportCenter" + "." + mpf.getContentType().split("/")[1];
+					imgField = new ImageField(SC_IMAGE_URL + sc.getIdSportCenter() + "/" + fileName,sc);
+					
+					imageService.save(imgField);
+					
+					sc.getImageFields().add(imgField);
+					bytes.add(mpf.getBytes());
+					path = Paths.get(SC_IMAGE_URL + sc.getIdSportCenter() + "/" + fileName);
+					Files.write(path, bytes.get(i));
+					i++;
+				}				
+				return new ResponseEntity<SportCenter>(sc,HttpStatus.OK);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				return new ResponseEntity(new ErrorMsg("Error during upload: " + multipartFile[0].getOriginalFilename()),HttpStatus.CONFLICT);
+			}
+					
+		}
+
+		
+		//Get all Images
+		@GetMapping("/{id}/image")		
+		public ResponseEntity<List<ImageField>> getImages(@PathVariable("id") int id){
+			return new ResponseEntity<List<ImageField>>(imageService.findBySportCenter(id),HttpStatus.OK);
+		}
 		
 }

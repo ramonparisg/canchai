@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "fieldtype")
 public class FieldType implements Serializable{
@@ -27,13 +29,10 @@ public class FieldType implements Serializable{
     private int capacity;
         
     @Column(name = "name")
-    private String name;
-    
-    @JoinColumn(name = "Material_idMaterial", referencedColumnName = "idMaterial")
-    @ManyToOne(optional = false)
-    private Material material;
+    private String name;        
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fieldType")
+    @JsonIgnore
     private List<Field> fields;
 
     public FieldType() {
@@ -73,13 +72,6 @@ public class FieldType implements Serializable{
         this.name = name;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
-    }
     
     public List<Field> getFields() {
         return fields;

@@ -22,7 +22,7 @@ public class SportCenterDao implements ISportCenterDao {
 	
 	@Override
 	public void save(SportCenter entity) {
-		entityManager.merge(entity);
+		entityManager.persist(entity);
 	}
 
 	@Override
