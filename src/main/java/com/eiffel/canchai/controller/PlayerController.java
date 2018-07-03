@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 
@@ -172,5 +173,10 @@ public class PlayerController {
 									
 			return new ResponseEntity<Player>(HttpStatus.OK);			
 		
+		}
+		
+		@GetMapping
+		public ResponseEntity<List<Player>> getAll(){
+			return new ResponseEntity<List<Player>>(playerService.findAll(),HttpStatus.OK);
 		}
 }

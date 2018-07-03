@@ -14,6 +14,7 @@ import com.eiffel.canchai.model.User;
 @Repository
 @Transactional
 public class UserDao implements IUserDao {
+	
 	@PersistenceContext
 	private EntityManager entityManager;
 	
@@ -56,6 +57,17 @@ public class UserDao implements IUserDao {
 		String hql = "from User where rut = :rut or email = :email";
 		int count = entityManager.createQuery(hql).setParameter("rut", rut).setParameter("email", email).getResultList().size();
 		return count > 0 ? true : false;		
+	}
+
+	@Override
+	public List<User> findNotAssigned() { 
+		String hql = "select u from User u "				
+				+ " left outer join u.sportCenters as sc"				
+				+ " join u.rol r where r.idRol = 3"
+				+ " and sc is null";
+					
+		return (List<User>) entityManager.createQuery(hql).getResultList();
+		//return (List<User>) entityManager.createNativeQuery(query).getResultList();
 	}
 	
 	

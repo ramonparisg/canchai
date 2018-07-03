@@ -56,6 +56,16 @@ public class UserController {
 		return new ResponseEntity<List<User>>(users,HttpStatus.OK);
 	}
 	
+	@GetMapping("/sc")
+	public ResponseEntity<List<User>> getSCUsers() {
+		List<User> users = new ArrayList<>();
+		users = userService.findNotAssigned();		
+		if (users.isEmpty()) 
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+		
+		return new ResponseEntity<List<User>>(users,HttpStatus.OK);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getUser(@PathVariable int id, UriComponentsBuilder builder){		
 		User user = userService.findById(id);

@@ -69,4 +69,9 @@ public class UserService implements IUserService {
 		return userDao.userExists(rut, email);
 	}
 
+	@Override
+	public List<User> findNotAssigned() {
+		return userDao.findNotAssigned();
+	}
+
 }
