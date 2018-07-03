@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.eiffel.canchai.model.Field;
 import com.eiffel.canchai.model.ImageField;
 import com.eiffel.canchai.model.Phone;
 import com.eiffel.canchai.model.Player;
@@ -71,6 +73,8 @@ public class SportCenterController {
 			return new ResponseEntity(new ErrorMsg("SportCenter ID " + idSportCenter + " doesn't exist"),HttpStatus.NO_CONTENT);
 		return new ResponseEntity<SportCenter>(sc,HttpStatus.OK);
 	}
+	
+	
 	
 	//Create sportcenters
 	@PostMapping("/register")
@@ -163,18 +167,39 @@ public class SportCenterController {
 	@GetMapping("/search")
 	public ResponseEntity<List<SportCenter>> findByCriteria(
 			@RequestParam("fieldtype") Integer fieldType, 
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam("date") Date date, 
+			@DateTimeFormat(pattern= "yyyy-MM-dd") @RequestParam("date") Date date, 
 			@RequestParam("time") Integer time,
 			@RequestParam("commune") Integer commune){
 		
 		if (fieldType == null || date == null || time == null || commune == null) 
 			return new ResponseEntity(new ErrorMsg("Check parameters. One or more are missing"),HttpStatus.NO_CONTENT);
+				
 		
-		
-		
-		
-		return new ResponseEntity(new ErrorMsg("Check parameters. One or more are missing"),HttpStatus.NO_CONTENT);
+		//return new ResponseEntity(date,HttpStatus.OK);
+		List<SportCenter> sportCenters = sportCenterService.findByCriteria(fieldType, date, time, commune);		
+		return new ResponseEntity(sportCenters,HttpStatus.OK);
 	}
+	
+	@GetMapping("/{id}/search")
+	public ResponseEntity<List<SportCenter>> findFieldsByCriteria(
+			@PathVariable("id") Integer id,
+			@RequestParam("fieldtype") Integer fieldType, 
+			@DateTimeFormat(pattern= "yyyy-MM-dd") @RequestParam("date") Date date, 
+			@RequestParam("time") Integer time,
+			@RequestParam("commune") Integer commune){
+		
+		if (fieldType == null || date == null || time == null || commune == null) 
+			return new ResponseEntity(new ErrorMsg("Check parameters. One or more are missing"),HttpStatus.NO_CONTENT);
+				
+		
+		//return new ResponseEntity(date,HttpStatus.OK);
+		List<Field> fields = sportCenterService.findFieldByCriteria(fieldType, date, time, commune,id);
+		SportCenter sc = sportCenterService.findById(id);
+		sc.setFields(fields);
+		return new ResponseEntity(sc,HttpStatus.OK);
+	}
+	
+	
 	
 	
 	//Upload image
@@ -224,5 +249,6 @@ public class SportCenterController {
 		public ResponseEntity<List<ImageField>> getImages(@PathVariable("id") int id){
 			return new ResponseEntity<List<ImageField>>(imageService.findBySportCenter(id),HttpStatus.OK);
 		}
+				
 		
 }

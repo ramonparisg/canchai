@@ -1,5 +1,6 @@
 package com.eiffel.canchai.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eiffel.canchai.dao.interfaces.ISportCenterDao;
+import com.eiffel.canchai.model.Field;
 import com.eiffel.canchai.model.SportCenter;
 import com.eiffel.canchai.service.interfaces.ISportCenterService;
 
@@ -55,6 +57,18 @@ public class SportCenterService implements ISportCenterService {
 	public SportCenter findByEmail(String email) {
 		
 		return exist(email) ? (SportCenter) sportCenterDao.findByEmail(email) : null;
+	}
+
+	@Override
+	public List<SportCenter> findByCriteria(int fieldType, Date date, int time, int commune) {
+		// TODO Auto-generated method stub
+		return sportCenterDao.findByCriteria(fieldType, date, time, commune);
+	}
+
+	@Override
+	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {
+		// TODO Auto-generated method stub
+		return sportCenterDao.findFieldByCriteria(fieldType, date, time, commune, sc);
 	}
 
 }

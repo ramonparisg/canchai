@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eiffel.canchai.dao.interfaces.ISportCenterDao;
+import com.eiffel.canchai.model.Field;
 import com.eiffel.canchai.model.SportCenter;
 
 
@@ -71,19 +72,45 @@ public class SportCenterDao implements ISportCenterDao {
 	}
 
 	@Override
-	public List<SportCenter> findByCriteria(int fieldType, Date date, int time, int commune) {
+	public List<SportCenter> findByCriteria(int fieldType, Date date, int time, int commune) {					
+		String HQL = "select distinct(sc) from SportCenter as sc "
+				+ "join sc.commune as c "
+				+ "join sc.fields as f "
+				+ "join f.fieldType as fType "				
+				+ "left join f.bookings as b "
+				//+ "join b.blockHour as h "
+				+ "where fType.idFieldType = :fieldType "
+				+ "and c.idCommune = :commune "
+				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) "
+				+ "or (b is null))";
 		
-		/*
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();		
-		CriteriaQuery<SportCenter> criteria = builder.createQuery(SportCenter.class);
-		Root<SportCenter> root = criteria.from(SportCenter.class);
-		criteria.select(root);
-		//criteria.where(builder.equal("", y))
-		*/
+		return (List<SportCenter>) entityManager.createQuery(HQL)
+				.setParameter("fieldType", fieldType)
+				.setParameter("commune",commune)
+				.setParameter("date",date)
+				.setParameter("time",time).getResultList();
+	}
+	
+	@Override
+	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {					
+		String HQL = "select distinct(f) from SportCenter as sc "
+				+ "join sc.commune as c "
+				+ "join sc.fields as f "
+				+ "join f.fieldType as fType "				
+				+ "left join f.bookings as b "
+				//+ "join b.blockHour as h "
+				+ "where fType.idFieldType = :fieldType "
+				+ "and sc.idSportCenter = :sc "
+				+ "and c.idCommune = :commune "
+				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) "
+				+ "or (b is null))";
 		
-		String q = "SELECT SportCenter FROM ";
-		
-		return null;
+		return (List<Field>) entityManager.createQuery(HQL)
+				.setParameter("fieldType", fieldType)
+				.setParameter("sc", sc)
+				.setParameter("commune",commune)
+				.setParameter("date",date)
+				.setParameter("time",time).getResultList();
 	}
 
 }
