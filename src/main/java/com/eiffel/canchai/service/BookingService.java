@@ -1,5 +1,8 @@
 package com.eiffel.canchai.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -19,8 +22,12 @@ public class BookingService implements IBookingService {
 	private IBookingDao bookingDao;
 	
 	@Override
-	public void save(Booking entity) {
-		bookingDao.save(entity);
+	public void save(Booking booking) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(booking.getGameDate());
+		c.add(Calendar.DAY_OF_YEAR, 1);
+		booking.setGameDate(c.getTime());
+		bookingDao.save(booking);
 	}
 
 	@Override
@@ -45,7 +52,21 @@ public class BookingService implements IBookingService {
 	@Override
 	public Booking findById(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		return bookingDao.findById(id);
+	}
+
+	@Override
+	public List<Booking> findByPlayerId(int id) {
+		// TODO Auto-generated method stub
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String today = sdf.format(new Date());
+		return bookingDao.findByPlayerId(id,new Date());
+	}
+
+	@Override
+	public List<Booking> findByCriteria(int fieldType, Date date, int time, int commune) {
+		// TODO Auto-generated method stub
+		return bookingDao.findByCriteria(fieldType, date, time, commune);
 	}
 
 }

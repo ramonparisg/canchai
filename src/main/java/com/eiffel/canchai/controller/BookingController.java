@@ -1,9 +1,11 @@
 package com.eiffel.canchai.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eiffel.canchai.model.BlockHour;
@@ -25,6 +28,7 @@ import com.eiffel.canchai.service.interfaces.IBookingService;
 import com.eiffel.canchai.service.interfaces.IBookingTypeService;
 import com.eiffel.canchai.service.interfaces.IFieldService;
 import com.eiffel.canchai.service.interfaces.IPlayerService;
+import com.eiffel.canchai.util.ErrorMsg;
 
 @RestController
 @RequestMapping("/booking")
@@ -64,6 +68,8 @@ public class BookingController {
 	
 	@PostMapping
 	public ResponseEntity<Booking> makeBooking(@RequestBody Booking booking){
+				
+		
 		booking.setBookingDate(new Date());
 		
 		booking.setStatus(1);
@@ -99,5 +105,30 @@ public class BookingController {
 		bookingService.save(booking);
 		
 		return new ResponseEntity<Booking>(booking,HttpStatus.OK);
+	}
+
+	@GetMapping("/player/{id}")
+	public ResponseEntity<List<Booking>> getBookingByPlayerId(@PathVariable("id") int idPlayer){
+		List<Booking> bookings = bookingService.findByPlayerId(idPlayer);
+		if (bookings.isEmpty()) {
+			return new ResponseEntity(new ErrorMsg("Lista vacía"),HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<List<Booking>>(bookings,HttpStatus.OK);
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<Booking>> getBookingByCriteria(
+			@RequestParam("fieldtype") Integer fieldType, 
+			@DateTimeFormat(pattern= "yyyy-MM-dd") @RequestParam("date") Date date, 
+			@RequestParam("time") Integer time,
+			@RequestParam("commune") Integer commune){
+		
+		List<Booking> bookings = bookingService.findByCriteria(fieldType, date, time, commune);		
+		if (bookings.isEmpty()) {
+			return new ResponseEntity(new ErrorMsg("Lista vacía"),HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<List<Booking>>(bookings,HttpStatus.OK);
 	}
 }

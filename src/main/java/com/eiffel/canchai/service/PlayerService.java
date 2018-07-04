@@ -51,4 +51,10 @@ public class PlayerService implements IPlayerService{
 		//return new Player();
 	}
 
+	@Override
+	public List<Player> findByBookingIntegration(int idBooking) {
+		// TODO Auto-generated method stub
+		return playerDao.findByBookingIntegration(idBooking);
+	}
+
 }

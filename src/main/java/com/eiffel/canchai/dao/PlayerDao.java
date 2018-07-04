@@ -55,6 +55,15 @@ public class PlayerDao implements IPlayerDao{
 	public Player findByUserID(int id) {		
 		return (Player) entityManager.createQuery("from Player where user.idUser = :id").setParameter("id", id).getSingleResult();		
 	}
+	@Override
+	public List<Player> findByBookingIntegration(int idBooking) {
+		// TODO Auto-generated method stub
+		String hql = "select p from Player as p"
+				+ " join p.games as g"
+				+ " join g.booking as b"
+				+ " where b.idBooking = :idBooking";				
+		return (List<Player>) entityManager.createQuery(hql).setParameter("idBooking", idBooking).getResultList();
+	}
 	
 	
 }

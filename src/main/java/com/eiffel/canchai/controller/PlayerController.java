@@ -179,4 +179,13 @@ public class PlayerController {
 		public ResponseEntity<List<Player>> getAll(){
 			return new ResponseEntity<List<Player>>(playerService.findAll(),HttpStatus.OK);
 		}
+		
+		@GetMapping("/game/{id}")
+		public ResponseEntity<List<Player>> getPlayersByIntegrationBooking(@PathVariable("id") int id){
+			List<Player> players = playerService.findByBookingIntegration(id);
+			if (players.isEmpty()) {
+				return new ResponseEntity(new ErrorMsg("Empty"), HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<List<Player>>(players,HttpStatus.OK);
+		}
 }

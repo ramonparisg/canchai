@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "game")
 public class Game implements Serializable{
@@ -28,8 +30,8 @@ public class Game implements Serializable{
     @OneToOne(optional = false)
     private Booking booking;
     
-    @Column(name = "integrationDate")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "integrationDate")    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date integrationDate;
     
     @Column(name = "status")
