@@ -1,5 +1,6 @@
 package com.eiffel.canchai.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,8 @@ public class BookingController {
 	
 	@PostMapping
 	public ResponseEntity<Booking> makeBooking(@RequestBody Booking booking){
+		booking.setBookingDate(new Date());
+		
 		booking.setStatus(1);
 		
 		BookingType bkType = bookingTypeService.findById(booking.getBookingType().getIdbookingType());
@@ -72,6 +75,18 @@ public class BookingController {
 		Field field = fieldService.findById(booking.getField().getIdField());
 		field.getBookings().add(booking);
 		booking.setField(field);
+		switch (booking.getBookingType().getIdbookingType()) {
+		case 1: //Privada
+			booking.setAvailableQuota(0);
+			break;
+		case 2: //Pública
+			booking.setAvailableQuota((booking.getField().getFieldType().getCapacity()) - 1);
+			break;
+		case 3: //Mixta
+			booking.setAvailableQuota((booking.getField().getFieldType().getCapacity()) - booking.getAvailableQuota());
+			break;		
+		}
+		
 		
 		Player player = playerService.findById(booking.getPlayer().getIdPlayer());
 		player.getBookings().add(booking);
