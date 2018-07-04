@@ -23,10 +23,11 @@ public class BookingService implements IBookingService {
 	
 	@Override
 	public void save(Booking booking) {
-		Calendar c = Calendar.getInstance();
+		/*Calendar c = Calendar.getInstance();
 		c.setTime(booking.getGameDate());
 		c.add(Calendar.DAY_OF_YEAR, 1);
-		booking.setGameDate(c.getTime());
+		booking.setGameDate(c.getTime());		
+		*/
 		bookingDao.save(booking);
 	}
 
