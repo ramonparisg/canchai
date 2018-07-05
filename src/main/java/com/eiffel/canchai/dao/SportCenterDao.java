@@ -87,7 +87,7 @@ public class SportCenterDao implements ISportCenterDao {
 				 * 
 				 */
 		
-		String HQL = "select sc from SportCenter sc "
+		String HQL = "select distinct(sc) from SportCenter sc "
 				+ " join sc.fields f "
 				+ " where f.fieldType.idFieldType = :fieldType"
 				+ " and sc.commune.idCommune = :commune";
