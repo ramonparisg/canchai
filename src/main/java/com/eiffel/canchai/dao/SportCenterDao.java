@@ -97,7 +97,7 @@ public class SportCenterDao implements ISportCenterDao {
 			return (List<SportCenter>) entityManager.createQuery(HQL)
 					.setParameter("fieldType", fieldType)
 					.setParameter("commune",commune)
-					.setParameter("fieldsWithBooking", findFieldsWithBooking(date, time))
+					.setParameter("fieldsWithBooking", fieldsWithBooking)
 					.getResultList();
 		}else	
 			return (List<SportCenter>) entityManager.createQuery(HQL)
@@ -110,29 +110,26 @@ public class SportCenterDao implements ISportCenterDao {
 	}
 	
 	@Override
-	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {					
-		/*String HQL = "select distinct(f) from SportCenter as sc "
-				+ "join sc.commune as c "
-				+ "join sc.fields as f "
-				+ "join f.fieldType as fType "				
-				+ "left join f.bookings as b "
-				+ "where fType.idFieldType = :fieldType "
-				+ "and sc.idSportCenter = :sc "
-				+ "and c.idCommune = :commune "
-				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) "
-				+ "or (b is null ))";*/
-		
+	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {									
 		String HQL = "select distinct(f) from Field f "
 				+ " join f.sportCenter sc"
 				+ " join f.bookings b"
 				+ " where f.fieldType.idFieldType = :fieldType"
-				+ " and sc.idSportCenter = :sc"
-				+ " and f not in :fieldsWithBooking";								
+				+ " and sc.idSportCenter = :sc";									
 		
-		return (List<Field>) entityManager.createQuery(HQL)
-				.setParameter("fieldType", fieldType)
-				.setParameter("sc", sc)
-				.setParameter("fieldsWithBooking", findFieldsWithBooking(date, time)).getResultList();
+		List<Field> fieldsWithBooking = findFieldsWithBooking(date, time);
+		if (!fieldsWithBooking.isEmpty()) {
+			HQL = HQL + " and f not in :fieldsWithBooking";
+			return (List<Field>) entityManager.createQuery(HQL)
+					.setParameter("fieldType", fieldType)
+					.setParameter("sc", sc)
+					.setParameter("fieldsWithBooking", fieldsWithBooking)
+					.getResultList();
+		}else	
+			return (List<Field>) entityManager.createQuery(HQL)
+					.setParameter("fieldType", fieldType)
+					.setParameter("sc", sc)
+					.getResultList();
 	}
 	
 	
