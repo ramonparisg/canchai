@@ -73,44 +73,74 @@ public class SportCenterDao implements ISportCenterDao {
 
 	@Override
 	public List<SportCenter> findByCriteria(int fieldType, Date date, int time, int commune) {					
-		String HQL = "select distinct(sc) from SportCenter as sc "
+		/*String HQL = "select distinct(sc) from SportCenter as sc "
 				+ "join sc.commune as c "
 				+ "join sc.fields as f "
 				+ "join f.fieldType as fType "				
-				+ "left join f.bookings as b "
+				+ "join f.bookings as b "
 				//+ "join b.blockHour as h "
 				+ "where fType.idFieldType = :fieldType "
 				+ "and c.idCommune = :commune "
-				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) "
-				+ "or (b is null))";
+				+ "not in (select )"
+				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) )";
+				//+ "or (b is null))";
+				 * 
+				 */
 		
-		return (List<SportCenter>) entityManager.createQuery(HQL)
-				.setParameter("fieldType", fieldType)
-				.setParameter("commune",commune)
-				.setParameter("date",date)
-				.setParameter("time",time).getResultList();
+		String HQL = "select sc from SportCenter sc "
+				+ " join sc.fields f "
+				+ " where f.fieldType.idFieldType = :fieldType"
+				+ " and sc.commune.idCommune = :commune";
+		List<Field> fieldsWithBooking = findFieldsWithBooking(date, time);
+		if (!fieldsWithBooking.isEmpty()) {
+			HQL = HQL + " and f not in :fieldsWithBooking";
+			return (List<SportCenter>) entityManager.createQuery(HQL)
+					.setParameter("fieldType", fieldType)
+					.setParameter("commune",commune)
+					.setParameter("fieldsWithBooking", findFieldsWithBooking(date, time))
+					.getResultList();
+		}else	
+			return (List<SportCenter>) entityManager.createQuery(HQL)
+					.setParameter("fieldType", fieldType)
+					.setParameter("commune",commune)					
+					.getResultList();
+		
+		
+		
 	}
 	
 	@Override
 	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {					
-		String HQL = "select distinct(f) from SportCenter as sc "
+		/*String HQL = "select distinct(f) from SportCenter as sc "
 				+ "join sc.commune as c "
 				+ "join sc.fields as f "
 				+ "join f.fieldType as fType "				
 				+ "left join f.bookings as b "
-				//+ "join b.blockHour as h "
 				+ "where fType.idFieldType = :fieldType "
 				+ "and sc.idSportCenter = :sc "
 				+ "and c.idCommune = :commune "
 				+ "and ((b.gameDate != :date or b.blockHour.idBlockHour != :time) "
-				+ "or (b is null))";
+				+ "or (b is null ))";*/
+		
+		String HQL = "select distinct(f) from Field f "
+				+ " join f.sportCenter sc"
+				+ " join f.bookings b"
+				+ " where f.fieldType.idFieldType = :fieldType"
+				+ " and sc.idSportCenter = :sc"
+				+ " and f not in :fieldsWithBooking";								
 		
 		return (List<Field>) entityManager.createQuery(HQL)
 				.setParameter("fieldType", fieldType)
 				.setParameter("sc", sc)
-				.setParameter("commune",commune)
-				.setParameter("date",date)
-				.setParameter("time",time).getResultList();
+				.setParameter("fieldsWithBooking", findFieldsWithBooking(date, time)).getResultList();
+	}
+	
+	
+	public List<Field> findFieldsWithBooking(Date date, int time) {
+		String HQL2 = "select distinct(b.field) from Booking b"
+				+ " where b.gameDate = :date"
+				+ " and b.blockHour.idBlockHour = :time";
+		return (List<Field>) entityManager.createQuery(HQL2).setParameter("date", date).setParameter("time", time).getResultList(); 
 	}
 
 }
