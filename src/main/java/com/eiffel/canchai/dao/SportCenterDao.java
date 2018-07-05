@@ -112,8 +112,7 @@ public class SportCenterDao implements ISportCenterDao {
 	@Override
 	public List<Field> findFieldByCriteria(int fieldType, Date date, int time, int commune, int sc) {									
 		String HQL = "select distinct(f) from Field f "
-				+ " join f.sportCenter sc"
-				+ " join f.bookings b"
+				+ " join f.sportCenter sc"				
 				+ " where f.fieldType.idFieldType = :fieldType"
 				+ " and sc.idSportCenter = :sc";									
 		
