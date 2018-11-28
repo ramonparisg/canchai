@@ -2,6 +2,7 @@ package com.eiffel.canchai.controller;
 
 import java.util.Date;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -246,8 +247,27 @@ public class SportCenterController {
 		
 		//Get all Images
 		@GetMapping("/{id}/image")		
-		public ResponseEntity<List<ImageField>> getImages(@PathVariable("id") int id){
-			return new ResponseEntity<List<ImageField>>(imageService.findBySportCenter(id),HttpStatus.OK);
+		public ResponseEntity<?> getImages(@PathVariable("id") int id){
+			List<ImageField> images = imageService.findBySportCenter(id);
+			try {
+				ArrayList<byte[]> byteImages = new ArrayList<>(); 
+				for (ImageField imageField : images) {
+					Path path = Paths.get(imageField.getUrl());
+					File f = path.toFile();
+					if (!f.exists()) {
+						return new ResponseEntity(new ErrorMsg("image not found"), HttpStatus.NOT_FOUND);
+					}					
+					byteImages.add(Files.readAllBytes(path));					
+				}
+				
+			
+			
+				return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(byteImages.get(0));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return new ResponseEntity(new ErrorMsg("Error during reading image"),HttpStatus.CONFLICT);
+			}
 		}
 				
 		
